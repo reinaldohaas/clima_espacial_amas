@@ -1,0 +1,4 @@
+# dados pesados do GOES (cache local; ~300 MB por banda Full Disk)
+dados_goes/
+__pycache__/
+~$*.docx

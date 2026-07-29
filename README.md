@@ -62,40 +62,30 @@ Duas linhas de evidência independentes separam as ondas eletrificadas da onda d
 
 ## Estrutura
 
-### Aquisição e processamento (rodam por linha de comando)
+```
+clima_espacial_amas/
+├── scripts/      todo o codigo .py (os do evento do Toro com prefixo toro_)
+│   └── antigos/  versoes superadas, mantidas por referencia
+├── notebooks/    nb01..nb04, interativos, abrem sobre dados ja baixados
+├── tools/        nb_limpa.py, concat_nc.py, migrar.py
+├── dados/        ENTRADAS: tudo que veio de fora
+│   ├── era5/ cams/ merra2/ goes/ goesp/ tec/ gnss/ geomag/ magnet/
+│   ├── muons/ nmdb/ geo/ indices/
+│   ├── jz/       series dos magnetometros (versionadas)
+│   ├── amas/ magnetometros_2023/ magnetometros_2024/
+│   └── cache_abi/
+├── resultados/   SAIDAS: tudo que os scripts produzem
+│   ├── *.csv     tabelas derivadas (versionadas)
+│   ├── fig_*.png figuras
+│   ├── rosenfeld_celulas/ graficos/ graficos_estacoes/ saidas_toro/
+│   └── logs/
+└── docs/         guias, fundamentacao teorica, fontes dos dados
+```
 
-| Script | O que faz |
-|--------|-----------|
-| `01_baixar_era5_vpi_slw_ivt.py` | ERA5 em níveis de pressão → VPI multi-nível, água líquida super-resfriada, IVT, precipitação |
-| `02_baixar_cams_aod.py` | CAMS EAC4 (ADS) → AOD total, orgânico, black carbon, fumaça |
-| `06_altura_fumaca_merra2.py` | MERRA-2, altura da camada de fumaça (baixa-1-apaga-1) |
-| `09_trajetorias_3d_isentropico.py` | Retro-trajetórias 3D e isentrópicas, semeadas por nível de VPI |
-| `11_glm_relampagos.py` | Flashes GOES-16 GLM por dia (bucket público na AWS) |
-| `12_topo_nuvem_dia_noite.py` | Métricas de topo de nuvem por onda, 24 h, resolvendo dia e noite |
-| `13_rosenfeld_celulas.py` | Análise de Rosenfeld por célula: núcleo a −55 °C, entorno até −10 °C, frente × traseira pelo movimento |
-| `14_baixar_meteo.py` | ERA5 single-level: MSLP, T2m, orvalho, vento 10 m, CAPE, CIN, TCWV, precipitação, K, Total Totals, IVT |
-| `15_inventario_dados.py` | Varre as pastas e monta a tabela do que existe: variável, datas, níveis, grade |
-
-### Notebooks interativos (abrem sobre dados já baixados, sem download)
-
-| Notebook | O que mostra |
-|----------|--------------|
-| `nb01_series_ondas.ipynb` | Séries de Jz, raios, IVT, VPI e fumaça com as faixas das ondas e defasagem |
-| `nb02_satelite_animacao.ipynb` | Animação GOES-16 nos 16 canais ABI, com GLM sobreposto, exporta GIF |
-| `nb03_celulas_rosenfeld.ipynb` | Saídas do script 13: r_e(T) frente × traseira, imagens, tabela |
-| `nb04_vpi.ipynb` | VPI interativa: variável × nível × tempo, superfície isentrópica, e uma aba de **qualidade da interpolação** (grade nativa × suavizada, corte vertical com os níveis reais) |
-
-### Apoio
-
-- `ondas_config.py` — define as ondas O0–O3, a caixa de análise (lat −36..−25, lon −60..−47)
-  e as cidades de referência. **Editar as ondas só aqui.**
-- `viz_helpers.py` — navegação GOES-16 ABI, downloader com cache, leitores, séries e os
-  helpers de mapa. Todo mapa é criado por `novo_mapa()`, que devolve um `GeoAxes` do
-  cartopy já com costa, fronteiras, estados, cidades e grade; `mapa_ref()` **levanta
-  `TypeError`** se receber um eixo comum, em vez de falhar em silêncio.
-- `tools/nb_limpa.py` — filtro que remove as saídas dos notebooks nos commits.
-
----
+O criterio da separacao e a **origem**: em `dados/` fica o que foi baixado de um
+servico externo (ERA5, CAMS, GOES, MERRA-2, Kp/Dst do GFZ e do WDC Kyoto); em
+`resultados/` fica exclusivamente o que algum script escreveu. Os scripts de
+download aceitam `--datadir` (padrao `dados`) e `--outdir` (padrao `resultados`).
 
 ## Dados
 
@@ -104,17 +94,17 @@ MERRA-2) e todos são reproduzíveis pelos scripts acima. O que está versionado
 **tabelas derivadas** em `resultados/*.csv` (~2,7 MB), suficientes para refazer as séries
 e as figuras sem baixar nada:
 
-- `rede_completa_14_estacoes_currents_2024.csv` — Jz da rede de 14 magnetômetros, 2024
-  inteiro, passo de 15 min
+- `dados/jz/rede_completa_14_estacoes_currents_2024.csv` — Jz da rede de 14
+  magnetômetros, 2024 inteiro, passo de 15 min (é entrada, não resultado)
 - `cams_aod_diario_*.csv` — AOD e fumaça (orgânico + black carbon) por região e janela
 - `era5_diario_*.csv`, `meteo_diario_*.csv`, `meteo_horario_*.csv` — meteorologia
 - `glm_flashes_rs_*.csv` — flashes por dia
 - `topo_nuvem_dia_noite.csv` — métricas de topo por onda
 - `traj_3d.csv`, `traj_isentropico.csv`, `trajetorias_rs.csv` — trajetórias
-- `kp_dst_2024.csv` — índices geomagnéticos
+- `dados/indices/kp_dst_2024.csv` — índices geomagnéticos, baixados do GFZ e do WDC Kyoto
 - `tabela_diaria_integrada_2024.csv` — tabela integrada diária
 
-Detalhes de origem e credenciais em `LEIA-ME_dados.md`.
+Detalhes de origem e credenciais em `docs/LEIA-ME_dados.md` e `docs/FONTES_DADOS.md`.
 
 ### Credenciais necessárias para rebaixar
 
@@ -139,6 +129,9 @@ git config filter.nbclean.clean "python tools/nb_limpa.py"
 ```
 
 ## Reproduzir
+
+Rode sempre a partir da raiz do projeto (`python scripts/01_...py`); os notebooks
+se reposicionam sozinhos na raiz pela primeira célula.
 
 Ordem sugerida: `15` (inventário, para ver o que já existe) → `01` e `14` (ERA5) →
 `02` (CAMS) → `11` (GLM) → `12` e `13` (GOES-16) → `09` (trajetórias). Depois abra os
