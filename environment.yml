@@ -1,0 +1,23 @@
+name: amas
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scipy
+  - xarray
+  - dask
+  - netcdf4
+  - h5netcdf
+  - matplotlib
+  - cartopy
+  - pillow
+  - jupyterlab
+  - ipywidgets
+  - ipympl
+  - s3fs
+  - cdsapi
+  - pip
+  - pip:
+      - earthaccess

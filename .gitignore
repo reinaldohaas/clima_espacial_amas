@@ -1,0 +1,58 @@
+# ---------------------------------------------------------------------------
+# Dados brutos e intermediarios: mais de 6 GB, reproduziveis pelos scripts 01-15.
+# O que fica versionado sao as TABELAS (.csv) derivadas, leves e suficientes
+# para refazer as figuras sem rebaixar nada.
+# ---------------------------------------------------------------------------
+dados/
+dados_2023_completo/
+dados_2024_completo/
+cache_abi/
+graficos/
+graficos_todas_estacoes/
+_backup_mapa/
+resultados/*_x/
+resultados/_merra2_tmp/
+
+# formatos pesados (netCDF, HDF, imagens, animacoes, KMZ)
+*.nc
+*.nc4
+*.hdf
+*.he5
+*.h5
+*.gif
+*.png
+*.jpg
+*.jpeg
+*.kmz
+*.zip
+
+# documento de fundamentacao (binario, versionado fora do git)
+*.docx
+
+# serie de Jz de versao antiga, superseded por rede_completa_14_estacoes
+rede_multiestacoes_currents_2024.csv
+
+# config local: aponta para arquivos de credencial da maquina
+.dodsrc
+
+# credenciais - NUNCA versionar
+.cdsapirc
+.netrc
+_netrc
+.urs_cookies
+*.pem
+*.key
+
+# python / jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# sistema
+.DS_Store
+Thumbs.db
+desktop.ini
